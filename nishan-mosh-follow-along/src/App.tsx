@@ -1,24 +1,17 @@
-import DismissableAlert from "./components/DismissableAlert";
-import BootstrapButton from "./components/BootstrapButton";
-import { useState } from "react";
+// This works because TypeScript looks for index.ts
+// if it doesnt find the ./components/ListGroup/ListGroup
+import ListGroup from "./components/ListGroup";
 function App() {
-	const [alertState, setAlertState] = useState(false);
+	const friendsList = ["Akhil", "Nishan", "Arjun"];
 	return (
 		<div>
-			{alertState && (
-				<DismissableAlert
-					onClose={() => {
-						setAlertState(false);
-					}}
-				>
-					<strong>Holy Shit!</strong> It's showing now.
-				</DismissableAlert>
-			)}
-			<BootstrapButton
-				buttonType="primary"
-				buttonText="Show Alert"
-				onClick={() => setAlertState(true)}
-			/>
+			<ListGroup
+				items={friendsList}
+				heading="Friends"
+				onSelect={() => {
+					console.log("selectedFriend");
+				}}
+			></ListGroup>
 		</div>
 	);
 }
