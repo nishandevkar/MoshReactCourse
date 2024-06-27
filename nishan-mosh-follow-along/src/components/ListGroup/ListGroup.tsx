@@ -1,8 +1,9 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { CiCircleList } from "react-icons/ci";
 
 const List = styled.ul`
-	padding: 2rem;
+	color: green;
 `;
 interface ListItemProps {
 	active: boolean;
@@ -22,6 +23,7 @@ function ListGroup({ items, heading, onSelect }: ListGroupProp) {
 		// empty tags tells react to use Fragments to enclose the children
 		// Since it will be converted as React.createElement("element")
 		<>
+			<CiCircleList size={40} color="gold"></CiCircleList>
 			<h1>{heading}</h1>
 			{items.length === 0 && <h2>No items found here</h2>}
 			<List>
