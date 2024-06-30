@@ -1,12 +1,12 @@
 // This works because TypeScript looks for index.ts
 // if it doesnt find the ./components/ListGroup/ListGroup
 
-import CartStateUpdateExercise from "./components/StateUpdateExercises/CartStateUpdateExercise";
+import BasicForm from "./components/BasicForm/BasicForm";
 
 function App() {
 	return (
 		<div>
-			<CartStateUpdateExercise></CartStateUpdateExercise>
+			<BasicForm></BasicForm>
 		</div>
 	);
 }
