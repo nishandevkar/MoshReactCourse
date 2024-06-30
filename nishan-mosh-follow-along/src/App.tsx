@@ -1,12 +1,12 @@
 // This works because TypeScript looks for index.ts
 // if it doesnt find the ./components/ListGroup/ListGroup
 
-import GameStateUpdateExercise from "./components/GameStateUpdateExercise/GameStateUpdateExercise";
+import PizzaToppingsUpdateExercise from "./components/StateUpdateExercises/PizzaToppingsUpdateExercise";
 
 function App() {
 	return (
 		<div>
-			<GameStateUpdateExercise></GameStateUpdateExercise>
+			<PizzaToppingsUpdateExercise></PizzaToppingsUpdateExercise>
 		</div>
 	);
 }
