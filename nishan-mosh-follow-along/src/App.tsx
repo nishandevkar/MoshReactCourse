@@ -1,11 +1,11 @@
 // This works because TypeScript looks for index.ts
 // if it doesnt find the ./components/ListGroup/ListGroup
-import Arrays from "./components/Arrays/Arrays";
+import ArrayOfBugs from "./components/ArrayOfBugs/ArrayOfBugs";
 
 function App() {
 	return (
 		<div>
-			<Arrays></Arrays>
+			<ArrayOfBugs></ArrayOfBugs>
 		</div>
 	);
 }
