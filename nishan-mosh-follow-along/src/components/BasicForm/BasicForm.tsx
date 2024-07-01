@@ -1,15 +1,24 @@
 import "./BasicForm.css";
 import { useForm, FieldValues } from "react-hook-form";
-interface FormData {
-	name: string;
-	age: number;
-}
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+const schema = z.object({
+	name: z.string().min(3, { message: "Name must be at least 3 characters" }),
+	age: z
+		.number({ invalid_type_error: "Age is required" })
+		.min(0, { message: "Age must be greater than 0" })
+		.max(117, {
+			message:
+				"You are older than the current oldest person in the world, congratulations",
+		}),
+});
+type FormData = z.infer<typeof schema>;
 const BasicForm = () => {
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<FormData>();
+	} = useForm<FormData>({ resolver: zodResolver(schema) });
 
 	const onSubmit = (data: FieldValues) => {
 		console.log(data);
@@ -21,18 +30,13 @@ const BasicForm = () => {
 					Name
 				</label>
 				<input
-					{...register("name", { required: true, minLength: 3 })}
+					{...register("name")}
 					id="name"
 					type="text"
 					className="form-control"
 				/>
-				{errors.name?.type === "required" && (
-					<p className="text-danger">The name is required</p>
-				)}
-				{errors.name?.type === "minLength" && (
-					<p className="text-danger">
-						The name should be 3 characters long
-					</p>
+				{errors.name && (
+					<p className="text-danger">{errors.name.message}</p>
 				)}
 			</div>
 			<div className="mb-3">
@@ -40,22 +44,13 @@ const BasicForm = () => {
 					Age
 				</label>
 				<input
-					{...register("age", { required: true, min: 0, max: 117 })}
+					{...register("age", { valueAsNumber: true })}
 					id="age"
 					type="number"
 					className="form-control"
 				/>
-				{errors.age?.type === "required" && (
-					<p className="text-danger">Age is required</p>
-				)}
-				{errors.age?.type === "min" && (
-					<p className="text-danger">Age cannot be negative</p>
-				)}
-				{errors.age?.type === "max" && (
-					<p className="text-warning">
-						You are older than the current oldest person in the
-						world, Congratulations
-					</p>
+				{errors.age && (
+					<p className="text-danger">{errors.age.message}</p>
 				)}
 			</div>
 			<button className="btn btn-primary" type="submit">
