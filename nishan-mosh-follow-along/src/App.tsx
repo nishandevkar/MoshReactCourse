@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import ExpenseList from "./components/ExpenseTracker/ExpenseList";
+import Dropdown from "./components/ExpenseTracker/Dropdown/Dropdown";
 
 // import ExpenseTrackerForm from "./components/ExpenseTracker/ExpenseTrackerForm";
 
@@ -16,28 +17,64 @@ function App() {
 		},
 		{
 			id: 2,
+			description: "Bananas",
+			amount: 9,
+			category: "Groceries",
+		},
+		{
+			id: 3,
 			description: "Netflix",
 			amount: 12,
 			category: "Entertainment",
 		},
 		{
-			id: 3,
+			id: 4,
+			description: "Disney+",
+			amount: 14,
+			category: "Entertainment",
+		},
+		{
+			id: 5,
 			description: "Electricity",
 			amount: 250,
 			category: "Utilities",
 		},
 	]);
 	if (expenseList.length === 0) return null;
+	const [selectedCategory, setSelectedCategory] = useState("All Categories");
+	const expensesCategory = [
+		"All Categories",
+		"Groceries",
+		"Entertainment",
+		"Utilities",
+	];
+	const filteredExpenseList =
+		selectedCategory != "All Categories"
+			? expenseList.filter(
+					(expense) => expense.category === selectedCategory
+			  )
+			: expenseList;
 	return (
-		<div>
-			{/* <ExpenseTrackerForm></ExpenseTrackerForm> */}
-			<ExpenseList
-				expenses={expenseList}
-				onDelete={(id) =>
-					setExpenseList(expenseList.filter((e) => e.id != id))
-				}
-			></ExpenseList>
-		</div>
+		<>
+			<div>
+				<Dropdown
+					dropdownItems={expensesCategory}
+					onSelectCategory={(event) => {
+						setSelectedCategory(event);
+					}}
+					selectedCategory={selectedCategory}
+				></Dropdown>
+				<ExpenseList
+					expenses={filteredExpenseList}
+					onDelete={(id) =>
+						setExpenseList(
+							filteredExpenseList.filter((e) => e.id != id)
+						)
+					}
+				></ExpenseList>
+				<p>{selectedCategory}</p>
+			</div>
+		</>
 	);
 }
 export default App;
