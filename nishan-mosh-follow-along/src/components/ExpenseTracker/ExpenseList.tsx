@@ -10,7 +10,7 @@ interface ExpenseArray {
 }
 const ExpenseList = ({ expenses, onDelete }: ExpenseArray) => {
 	return (
-		<div>
+		<div className="m-5">
 			<table className="table table-bordered">
 				<thead>
 					<tr>

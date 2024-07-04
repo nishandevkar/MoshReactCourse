@@ -4,8 +4,8 @@
 import { useState } from "react";
 import ExpenseList from "./components/ExpenseTracker/ExpenseList";
 import Dropdown from "./components/ExpenseTracker/Dropdown/Dropdown";
-
-// import ExpenseTrackerForm from "./components/ExpenseTracker/ExpenseTrackerForm";
+import ExpenseTrackerForm from "./components/ExpenseTracker/ExpenseTrackerForm";
+import expensesCategory from "./components/ExpenseTracker/categories";
 
 function App() {
 	const [expenseList, setExpenseList] = useState([
@@ -42,12 +42,7 @@ function App() {
 	]);
 	if (expenseList.length === 0) return null;
 	const [selectedCategory, setSelectedCategory] = useState("All Categories");
-	const expensesCategory = [
-		"All Categories",
-		"Groceries",
-		"Entertainment",
-		"Utilities",
-	];
+
 	const filteredExpenseList =
 		selectedCategory != "All Categories"
 			? expenseList.filter(
@@ -57,8 +52,16 @@ function App() {
 	return (
 		<>
 			<div>
+				<ExpenseTrackerForm
+					onSubmit={(data) =>
+						setExpenseList([
+							...expenseList,
+							{ ...data, id: expenseList.length + 1 },
+						])
+					}
+				></ExpenseTrackerForm>
 				<Dropdown
-					dropdownItems={expensesCategory}
+					dropdownItems={[...expensesCategory]}
 					onSelectCategory={(event) => {
 						setSelectedCategory(event);
 					}}
@@ -72,7 +75,6 @@ function App() {
 						)
 					}
 				></ExpenseList>
-				<p>{selectedCategory}</p>
 			</div>
 		</>
 	);

@@ -1,97 +1,101 @@
 import { FormEvent, useState } from "react";
 import "./ExpenseTrackerForm.css";
-import ExpenseList from "./ExpenseList";
-const ExpenseTrackerForm = () => {
-	const [formComponentValues, setFormComponentValues] = useState([
-		{
-			id: 1,
-			description: "",
-			amount: 0,
-			category: "",
-		},
-	]);
-	const handleSubmit = (event: FormEvent) => {
-		event.preventDefault();
-		console.log(formComponentValues);
-	};
+import category from "./categories";
+import z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const schema = z.object({
+	description: z
+		.string()
+		.min(3, { message: "Description should have minimum 3 characters" })
+		.max(40, { message: "Description can have only upto 40 characters" }),
+	amount: z.number({ invalid_type_error: "Amount is required" }).min(0.01),
+	category: z.enum(category, {
+		errorMap: () => ({ message: "Category is required" }),
+	}),
+});
+
+type ExpenseFormData = z.infer<typeof schema>;
+
+interface ExpenseFormProps {
+	onSubmit: (data: ExpenseFormData) => void;
+}
+const ExpenseTrackerForm = ({ onSubmit }: ExpenseFormProps) => {
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = useForm<ExpenseFormData>({ resolver: zodResolver(schema) });
+
 	return (
 		<div>
-			<form onSubmit={handleSubmit}>
+			<form
+				onSubmit={handleSubmit((data) => {
+					onSubmit(data);
+					reset();
+				})}
+			>
 				<div className="mb-3">
 					<label htmlFor="description" className="form-label">
 						Description
 					</label>
 					<input
-						value={formComponentValues[0].description}
+						{...register("description")}
 						id="description"
 						type="text"
 						className="form-control"
-						onChange={(e) =>
-							setFormComponentValues([
-								...formComponentValues,
-								{
-									...formComponentValues[0],
-									description: e.target.value,
-								},
-							])
-						}
 					/>
+					{errors.description && (
+						<p className="text-danger">
+							{errors.description.message}
+						</p>
+					)}
 				</div>
 				<div className="mb-3">
 					<label htmlFor="amount" className="form-label">
 						Amount
 					</label>
 					<input
-						value={formComponentValues[0].amount}
+						{...register("amount", { valueAsNumber: true })}
 						id="amount"
 						type="number"
 						className="form-control"
-						onChange={(e) =>
-							setFormComponentValues([
-								...formComponentValues,
-								{
-									...formComponentValues[0],
-									amount: parseInt(e.target.value),
-								},
-							])
-						}
 					/>
+					{errors.amount && (
+						<p className="text-danger">{errors.amount.message}</p>
+					)}
 				</div>
 				<div className="mb-3">
 					<label htmlFor="select" className="form-label">
 						Category
 					</label>
 					<select
-						value={formComponentValues[0].category}
+						{...register("category")}
 						id="select"
 						className="form-select"
 						aria-label="Select category"
-						onChange={(e) => {
-							setFormComponentValues([
-								...formComponentValues,
-								{
-									...formComponentValues[0],
-									category: e.target.value,
-								},
-							]);
-						}}
 					>
-						<option defaultValue={"Select Category"}>
+						<option defaultValue={category[0]}>
 							Select category
 						</option>
-						<option value="Groceries">Groceries</option>
-						<option value="Utilities">Utilities</option>
-						<option value="Entertainment">Entertainment</option>
+						{category.map((eachCategory) =>
+							eachCategory ? (
+								<option value={eachCategory} key={eachCategory}>
+									{eachCategory}
+								</option>
+							) : null
+						)}
 					</select>
+					{errors.category && (
+						<p className="text-danger">{errors.category.message}</p>
+					)}
 				</div>
 				<button type="submit" className="btn btn-primary">
 					Submit
 				</button>
 			</form>
-			<ExpenseList
-				expenses={formComponentValues}
-				onDelete={() => console.log(null)}
-			></ExpenseList>
 		</div>
 	);
 };
