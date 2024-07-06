@@ -40,7 +40,7 @@ function App() {
 			category: "Utilities",
 		},
 	]);
-	if (expenseList.length === 0) return null;
+
 	const [selectedCategory, setSelectedCategory] = useState("All Categories");
 
 	const filteredExpenseList =
@@ -49,6 +49,26 @@ function App() {
 					(expense) => expense.category === selectedCategory
 			  )
 			: expenseList;
+	if (expenseList.length === 0)
+		return (
+			<div>
+				<ExpenseTrackerForm
+					onSubmit={(data) =>
+						setExpenseList([
+							...expenseList,
+							{ ...data, id: expenseList.length + 1 },
+						])
+					}
+				></ExpenseTrackerForm>
+				<Dropdown
+					dropdownItems={[...expensesCategory]}
+					onSelectCategory={(event) => {
+						setSelectedCategory(event);
+					}}
+					selectedCategory={selectedCategory}
+				></Dropdown>
+			</div>
+		);
 	return (
 		<>
 			<div>
