@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { CanceledError } from "axios";
 import { useEffect, useState } from "react";
 interface Comments {
 	body?: string;
@@ -12,24 +12,30 @@ interface Comments {
 const FetchAPIExample = () => {
 	const [comments, setComments] = useState<Comments[]>([]);
 	const [error, setError] = useState("");
+	const [isLoading, setLoader] = useState(false);
 	useEffect(() => {
-		const getCommentResponse = async () => {
-			try {
-				const res = await axios.get<Array<Comments>>(
-					"https://jsonplaceholder.typicode.com/comments"
-				);
-				setComments(res.data);
-			} catch (err) {
-				setError((err as AxiosError).message);
-			}
-		};
-		getCommentResponse();
-		// .then((response) => setComments(response.data))
-		// .catch((err) => setError(err.message));
+		const controller = new AbortController();
+		setLoader(true);
+		axios
+			.get<Array<Comments>>(
+				"https://jsonplaceholder.typicode.com/comments",
+				{ signal: controller.signal }
+			)
+			.then((response) => {
+				setLoader(false);
+				setComments(response.data);
+			})
+			.catch((err) => {
+				if (err instanceof CanceledError) return;
+				setError(err.message);
+			});
+
+		return () => controller.abort();
 	}, []);
 	return (
 		<>
-			<p>{error}</p>
+			{isLoading && <div className="spinner-border"></div>}
+			<p className="text-danger">{error}</p>
 			<div>
 				<ul>
 					{comments.map((data) => (
