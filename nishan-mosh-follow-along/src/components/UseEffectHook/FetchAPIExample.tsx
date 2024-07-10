@@ -32,14 +32,38 @@ const FetchAPIExample = () => {
 
 		return () => controller.abort();
 	}, []);
+
+	const deleteComment = (comment: Comments) => {
+		const originalComments = [...comments];
+		setComments(comments.filter((comm) => comment.name !== comm.name));
+		axios
+			.delete(
+				"https://jsonplaceholder.typicode.com/comments/" + comment.id
+			)
+			.catch((err) => {
+				setError(err.message);
+				setComments(originalComments);
+			});
+	};
 	return (
 		<>
 			{isLoading && <div className="spinner-border"></div>}
 			<p className="text-danger">{error}</p>
 			<div>
-				<ul>
+				<ul className="list-group">
 					{comments.map((data) => (
-						<li key={data.name}>{data.name}</li>
+						<li
+							key={data.name}
+							className="list-group-item d-flex justify-content-between"
+						>
+							{data.name}
+							<div
+								className="btn btn-outline-danger"
+								onClick={() => deleteComment(data)}
+							>
+								Delete
+							</div>
+						</li>
 					))}
 				</ul>
 			</div>
