@@ -1,22 +1,11 @@
-import { useState } from "react";
-import ProductList from "./components/ProductList/ProductList";
+import FetchAPIExample from "./components/UseEffectHook/FetchAPIExample";
+
+FetchAPIExample;
 
 function App() {
-	const [category, setCategory] = useState("");
 	return (
 		<>
-			<div>
-				<select
-					className="form-select"
-					onChange={(event) => {
-						setCategory(event.target.value);
-					}}
-				>
-					<option value="Clothing">Clothing</option>
-					<option value="Entertainment">Entertainment</option>
-				</select>
-				<ProductList category={category}></ProductList>
-			</div>
+			<FetchAPIExample></FetchAPIExample>
 		</>
 	);
 }
