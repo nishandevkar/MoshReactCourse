@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 interface Comments {
 	body?: string;
@@ -13,12 +13,19 @@ const FetchAPIExample = () => {
 	const [comments, setComments] = useState<Comments[]>([]);
 	const [error, setError] = useState("");
 	useEffect(() => {
-		axios
-			.get<Array<Comments>>(
-				"https://jsonplaceholder.typicode.com/xcomments"
-			)
-			.then((response) => setComments(response.data))
-			.catch((err) => setError(err.message));
+		const getCommentResponse = async () => {
+			try {
+				const res = await axios.get<Array<Comments>>(
+					"https://jsonplaceholder.typicode.com/comments"
+				);
+				setComments(res.data);
+			} catch (err) {
+				setError((err as AxiosError).message);
+			}
+		};
+		getCommentResponse();
+		// .then((response) => setComments(response.data))
+		// .catch((err) => setError(err.message));
 	}, []);
 	return (
 		<>
