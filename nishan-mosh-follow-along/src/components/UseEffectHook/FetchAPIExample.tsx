@@ -45,11 +45,35 @@ const FetchAPIExample = () => {
 				setComments(originalComments);
 			});
 	};
+
+	const addComment = () => {
+		const originalComments = [...comments];
+		const newComment = {
+			body: "Comment Body",
+			email: "emailExample@example.com",
+			name: "Nishan Devkar",
+			id: 0,
+			postId: 0,
+		};
+		setComments([newComment, ...comments]);
+		axios
+			.post("https://jsonplaceholder.typicode.com/xcomments/", newComment)
+			.then(({ data: savedComment }) =>
+				setComments([savedComment, ...comments])
+			)
+			.catch((err) => {
+				setError(err.message);
+				setComments(originalComments);
+			});
+	};
 	return (
 		<>
 			{isLoading && <div className="spinner-border"></div>}
 			<p className="text-danger">{error}</p>
 			<div>
+				<div className="btn btn-primary mb-2" onClick={addComment}>
+					Add
+				</div>
 				<ul className="list-group">
 					{comments.map((data) => (
 						<li
