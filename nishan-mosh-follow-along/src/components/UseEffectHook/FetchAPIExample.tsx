@@ -66,6 +66,31 @@ const FetchAPIExample = () => {
 				setComments(originalComments);
 			});
 	};
+
+	const updateComment = (comment: Comments) => {
+		const originalComments = [...comments];
+		const updatedComment = {
+			...comment,
+			name: comment.name.includes(" Nishan's update")
+				? comment.name
+				: comment.name + " Nishan's update",
+		};
+
+		setComments(
+			comments.map((comm) =>
+				comm.id === comment.id ? updatedComment : comm
+			)
+		);
+		axios
+			.patch(
+				"https://jsonplaceholder.typicode.com/xcomments/" + comment.id,
+				updatedComment
+			)
+			.catch((err) => {
+				setError(err.message);
+				setComments(originalComments);
+			});
+	};
 	return (
 		<>
 			{isLoading && <div className="spinner-border"></div>}
@@ -74,6 +99,7 @@ const FetchAPIExample = () => {
 				<div className="btn btn-primary mb-2" onClick={addComment}>
 					Add
 				</div>
+
 				<ul className="list-group">
 					{comments.map((data) => (
 						<li
@@ -81,11 +107,19 @@ const FetchAPIExample = () => {
 							className="list-group-item d-flex justify-content-between"
 						>
 							{data.name}
-							<div
-								className="btn btn-outline-danger"
-								onClick={() => deleteComment(data)}
-							>
-								Delete
+							<div className="buttons-container">
+								<div
+									className="btn btn-outline-secondary mb-2"
+									onClick={() => updateComment(data)}
+								>
+									Update
+								</div>
+								<div
+									className="btn btn-outline-danger mx-1 mb-2"
+									onClick={() => deleteComment(data)}
+								>
+									Delete
+								</div>
 							</div>
 						</li>
 					))}
