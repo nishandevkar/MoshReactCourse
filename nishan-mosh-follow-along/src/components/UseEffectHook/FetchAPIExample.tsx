@@ -1,5 +1,5 @@
-import axios, { CanceledError } from "axios";
 import { useEffect, useState } from "react";
+import apiClient, { CanceledError } from "../services/api-client";
 interface Comments {
 	body?: string;
 	email?: string;
@@ -16,11 +16,8 @@ const FetchAPIExample = () => {
 	useEffect(() => {
 		const controller = new AbortController();
 		setLoader(true);
-		axios
-			.get<Array<Comments>>(
-				"https://jsonplaceholder.typicode.com/comments",
-				{ signal: controller.signal }
-			)
+		apiClient
+			.get<Array<Comments>>("/comments", { signal: controller.signal })
 			.then((response) => {
 				setLoader(false);
 				setComments(response.data);
@@ -36,14 +33,10 @@ const FetchAPIExample = () => {
 	const deleteComment = (comment: Comments) => {
 		const originalComments = [...comments];
 		setComments(comments.filter((comm) => comment.name !== comm.name));
-		axios
-			.delete(
-				"https://jsonplaceholder.typicode.com/comments/" + comment.id
-			)
-			.catch((err) => {
-				setError(err.message);
-				setComments(originalComments);
-			});
+		apiClient.delete("/comments/" + comment.id).catch((err) => {
+			setError(err.message);
+			setComments(originalComments);
+		});
 	};
 
 	const addComment = () => {
@@ -56,8 +49,8 @@ const FetchAPIExample = () => {
 			postId: 0,
 		};
 		setComments([newComment, ...comments]);
-		axios
-			.post("https://jsonplaceholder.typicode.com/xcomments/", newComment)
+		apiClient
+			.post("/comments/", newComment)
 			.then(({ data: savedComment }) =>
 				setComments([savedComment, ...comments])
 			)
@@ -81,11 +74,8 @@ const FetchAPIExample = () => {
 				comm.id === comment.id ? updatedComment : comm
 			)
 		);
-		axios
-			.patch(
-				"https://jsonplaceholder.typicode.com/xcomments/" + comment.id,
-				updatedComment
-			)
+		apiClient
+			.patch("/comments/" + comment.id, updatedComment)
 			.catch((err) => {
 				setError(err.message);
 				setComments(originalComments);
