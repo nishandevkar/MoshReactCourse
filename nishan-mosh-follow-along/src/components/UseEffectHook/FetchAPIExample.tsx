@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import apiClient, { CanceledError } from "../services/api-client";
+import { CanceledError } from "../services/api-client";
+import userService from "../services/user-service";
 interface Comments {
 	body?: string;
 	email?: string;
@@ -14,10 +15,9 @@ const FetchAPIExample = () => {
 	const [error, setError] = useState("");
 	const [isLoading, setLoader] = useState(false);
 	useEffect(() => {
-		const controller = new AbortController();
 		setLoader(true);
-		apiClient
-			.get<Array<Comments>>("/comments", { signal: controller.signal })
+		const { request, cancel } = userService.getAllComments();
+		request
 			.then((response) => {
 				setLoader(false);
 				setComments(response.data);
@@ -27,13 +27,13 @@ const FetchAPIExample = () => {
 				setError(err.message);
 			});
 
-		return () => controller.abort();
+		return () => cancel();
 	}, []);
 
 	const deleteComment = (comment: Comments) => {
 		const originalComments = [...comments];
 		setComments(comments.filter((comm) => comment.name !== comm.name));
-		apiClient.delete("/comments/" + comment.id).catch((err) => {
+		userService.deleteComment(comment.id).catch((err) => {
 			setError(err.message);
 			setComments(originalComments);
 		});
@@ -49,8 +49,8 @@ const FetchAPIExample = () => {
 			postId: 0,
 		};
 		setComments([newComment, ...comments]);
-		apiClient
-			.post("/comments/", newComment)
+		userService
+			.postComment(newComment)
 			.then(({ data: savedComment }) =>
 				setComments([savedComment, ...comments])
 			)
@@ -74,12 +74,10 @@ const FetchAPIExample = () => {
 				comm.id === comment.id ? updatedComment : comm
 			)
 		);
-		apiClient
-			.patch("/comments/" + comment.id, updatedComment)
-			.catch((err) => {
-				setError(err.message);
-				setComments(originalComments);
-			});
+		userService.updateComment(updatedComment).catch((err) => {
+			setError(err.message);
+			setComments(originalComments);
+		});
 	};
 	return (
 		<>
